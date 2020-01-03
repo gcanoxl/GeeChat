@@ -39,9 +39,13 @@ class UserThread(threading.Thread):
                           userlist=self.server.get_userlist())
 
     def logout(self):
-        self.server.user_logout(self)
-        self._send_action('logout', username=self.username,
-                          userlist=self.server.get_userlist())
+        if self in self.server.userlist:
+            self.server.user_logout(self)
+            self._send_action('logout', username=self.username,
+                              userlist=self.server.get_userlist())
+
+    def send_to_all(self, msg):
+        self._send_action('chat_msg', msg=msg, sender=self.username)
 
     def parseMsg(self, msg):
         json_msg = json.loads(msg)
@@ -53,7 +57,7 @@ class UserThread(threading.Thread):
         elif action == 'logout':
             self.logout()
         elif action == 'send_to_all':
-            print('send')
+            self.send_to_all(param['msg'])
 
     def run(self):
         self._recvMsg()

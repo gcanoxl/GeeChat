@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QInputDialog
 from clientComponent import GeeUserList, GeeContentBox, GeeInputMsgBox
 import socket
 import json
+import time
 import _thread
 
 
@@ -62,6 +63,8 @@ class GeeChatClient(QWidget):
         elif action == 'logout':
             self.logout_msg(param['username'])
             self.update_userlist(param['userlist'])
+        elif action == 'chat_msg':
+            self.show_msg_with_time(param['msg'], param['sender'])
 
     def login(self):
         self.username = QInputDialog().getText(
@@ -71,17 +74,35 @@ class GeeChatClient(QWidget):
     def logout(self):
         self._send_action('logout')
 
+    def insert_html(self, html):
+        self.contentBox.insertHtml(html)
+        print(self.contentBox.cursorWidth())
+
+    def show_msg_with_time(self, msg, sender):
+        if sender == self.username:
+            sender = "<font color=purple>%s</font>" % sender
+        strtime = time.strftime('%H:%M:%S', time.localtime())
+        html = '''
+        <strong>
+        <font color=gray>%s</font>
+        <font color=black>-></font>
+        <font yellow=black>%s</font>
+        </strong>
+        : %s <br/>
+        ''' % (strtime, sender, msg)
+        self.insert_html(html)
+
     def login_msg(self, username):
         html = '''
-        <strong><font color=green>%s</font> logined!<br/></strong>
+        <strong><font color=green>%s</font> logined!</strong><br/>
         ''' % username
-        self.contentBox.insertHtml(html)
+        self.insert_html(html)
 
     def logout_msg(self, username):
         html = '''
-        <strong><font color=red>%s</font> logout!<br/></strong>
+        <strong><font color=red>%s</font> logout!</strong><br/>
         ''' % username
-        self.contentBox.insertHtml(html)
+        self.insert_html(html)
 
     def update_userlist(self, userlist):
         self.userList.clear()
@@ -94,7 +115,7 @@ class GeeChatClient(QWidget):
         _thread.start_new_thread(self._recvMsg, ())
 
     def sendMsg(self, msg):
-        self._send_action('send_to_all', msg=msg)
+        self._send_action('send_to_all', msg=msg, send_time=time.localtime())
 
     def closeEvent(self, e):
         self.logout()

@@ -21,7 +21,8 @@ class GeeChatServer(object):
         return userlist
 
     def user_logout(self, user):
-        self.userlist.remove(user)
+        if user in self.userlist:
+            self.userlist.remove(user)
 
     def launchServer(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
