@@ -1,5 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QInputDialog
+from PyQt5.QtWidgets import QAction, QMessageBox, QFileDialog
+from PyQt5.QtGui import QIcon
 from clientComponent import GeeUserList, GeeContentBox, GeeInputMsgBox
+from clientComponent import GeeToolBar
 import socket
 import json
 import time
@@ -25,19 +28,49 @@ class GeeChatClient(QWidget):
         # InputMsgBox
         self.inputMsgBox = GeeInputMsgBox(self)
 
+        # Toolbar
+        self.toolsbar = GeeToolBar()
+        self.emoji_action = QAction(QIcon('resource/emoji.png'), 'Emoji', self)
+        self.emoji_action.triggered.connect(self.select_emoji)
+        self.pick_picture_action = QAction(
+            QIcon('resource/picture.png'), 'Picture', self)
+        self.pick_picture_action.triggered.connect(self.pick_picture)
+
+        self.toolsbar.addAction(self.emoji_action)
+        self.toolsbar.addAction(self.pick_picture_action)
+
         # Layout
         self.hbox = QHBoxLayout()
 
         self.hbox.addWidget(self.userList, 2)
 
         self.vbox = QVBoxLayout()
-        self.vbox.addWidget(self.contentBox, 8)
+        self.vbox.addWidget(self.contentBox, 7)
+        self.vbox.addWidget(self.toolsbar, 1)
         self.vbox.addWidget(self.inputMsgBox, 2)
 
         self.hbox.addLayout(self.vbox, 8)
         self.setLayout(self.hbox)
 
         self.show()
+
+    def select_emoji(self):
+        qmb = QMessageBox(self)
+        qmb.setText('This feature is still developing... \
+        Please being patient.')
+        qmb.show()
+
+    def send_picture(self, filename):
+        # self._do
+        pass
+
+    def pick_picture(self):
+        qfd = QFileDialog()
+        qfd.setNameFilters(["*.png", "*.jpg"])
+        if qfd.exec():
+            files = qfd.selectedFiles()
+            for file in files:
+                self.send_picture(file)
 
     def _sendMsg(self, msg):
         self.socket.send(msg.encode())
@@ -76,7 +109,6 @@ class GeeChatClient(QWidget):
 
     def insert_html(self, html):
         self.contentBox.insertHtml(html)
-        print(self.contentBox.cursorWidth())
 
     def show_msg_with_time(self, msg, sender):
         if sender == self.username:
@@ -115,7 +147,8 @@ class GeeChatClient(QWidget):
         _thread.start_new_thread(self._recvMsg, ())
 
     def sendMsg(self, msg):
-        self._send_action('send_to_all', msg=msg, send_time=time.localtime())
+        self._send_action('send_to_all', msg=msg,
+                          send_time=time.localtime())
 
     def closeEvent(self, e):
         self.logout()

@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTextEdit, QListWidget
+from PyQt5.QtWidgets import QTextEdit, QListWidget, QToolBar
 from PyQt5.QtCore import Qt
 
 
@@ -33,3 +33,8 @@ class GeeInputMsgBox(GeeTextEdit):
             self.clear()
         else:
             super().keyPressEvent(e)
+
+
+class GeeToolBar(QToolBar):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
