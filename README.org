@@ -1,4 +1,23 @@
-* This is a simple TOY chat program.
+* What is this?
+** This is a simple TOY chat program.
+This program has a lot of bugs, but I *will not fix it*. because it's just a *toy*.
+* Installation
+#+BEGIN_SRC sh
+  git clone git@github.com:gcanoxl/GeeChat.git
+
+  pip3 install pyqt5
+#+END_SRC
+* Usage
+** Change the HOST and PORT in the source code
+You should change the ~host~ and ~port~ manually.
+** Server
+#+BEGIN_SRC sh
+  python3 server.py
+#+END_SRC
+** Client
+#+BEGIN_SRC sh
+  python3 client.py
+#+END_SRC
 * Screenshots
 
 #+DOWNLOADED: screenshot @ 2020-01-03 22:51:28
