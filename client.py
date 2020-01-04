@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QInputDialog
-from PyQt5.QtWidgets import QAction, QMessageBox, QFileDialog
+from PyQt5.QtWidgets import QAction, QMessageBox, QFileDialog, QApplication
 from PyQt5.QtGui import QIcon
 from clientComponent import GeeUserList, GeeContentBox, GeeInputMsgBox
 from clientComponent import GeeToolBar
 import socket
+import sys
 import json
 import time
 import _thread
@@ -15,7 +16,7 @@ class GeeChatClient(QWidget):
         self.initUI()
         self.userlist = []
 
-        self.connect('127.0.0.1', 54188)
+        self.connect('mc.cano.xyz', 54188)
         self.login()
 
     def initUI(self):
@@ -154,3 +155,13 @@ class GeeChatClient(QWidget):
         self.logout()
         _thread.exit()
         self.socket.close()
+
+
+def main():
+    app = QApplication(sys.argv)
+    gcc = GeeChatClient()
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
